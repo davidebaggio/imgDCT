@@ -1,8 +1,11 @@
 BUILD:= ./build
+LIB:= $(BUILD)/lib
+EXE:= $(BUILD)/executable
 INCLUDE:= ./include
 SRC:= ./src
 SDL2I:= ./SDL2/include
 SDL2L:= ./SDL2/lib
+LIBIMG:= $(LIB)/libimg.a
 
 CC:= g++
 CFLAGS:= -std=c++17 -I$(INCLUDE) -I$(SDL2I) -Wall -Wextra
@@ -18,7 +21,18 @@ ifeq ($(detected_OS),Windows)
     LFLAGS += -L$(SDL2L)
 endif
 
-all:
-	$(CC) $(CFLAGS) $(SRC)/main.cpp $(LFLAGS) -o $(BUILD)/main
+all: lib test
 
+lib:
+	$(CC) $(CFLAGS) -c $(SRC)/imagehandler.cpp $(LFLAGS) -o $(BUILD)/imagehandler.o
+	ar ruv $(LIB)/libimg.a ./build/imagehandler.o
+	ranlib $(LIB)/libimg.a
+
+test:
+	$(CC) $(CFLAGS) ./tests/main.cpp $(LIBIMG) $(LFLAGS) -o $(EXE)/main
+
+clear:
+	rm ./build/*.o
+	rm $(LIBIMG)
+	rm $(EXE)/*.exe
 #g++ -std=c17++ main.cpp -I{Path to SDL2\include} -L{Path to SDL2\lib} -Wall -lmingw32 -lSDL2main  -o main

@@ -1,40 +1,5 @@
 #include <iostream>
-#define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-Uint32 getpixel(SDL_Surface *surface, int x, int y)
-{
-	int bpp = surface->format->BytesPerPixel;
-	// std::cout << bpp << "\n";
-	/* Here p is the address to the pixel we want to retrieve */
-	Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
-
-	switch (bpp)
-	{
-	case 1:
-		return *p;
-		break;
-
-	case 2:
-		return *(Uint16 *)p;
-		break;
-
-	case 3:
-		if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			return p[0] << 16 | p[1] << 8 | p[2];
-		else
-			return p[0] | p[1] << 8 | p[2] << 16;
-		break;
-
-	case 4:
-		return *(Uint32 *)p;
-		break;
-
-	default:
-		return 0; /* shouldn't happen, but avoids warnings */
-	}
-}
+#include "imagehandler.hpp"
 
 int main(int argc, char const *argv[])
 {
@@ -66,9 +31,20 @@ int main(int argc, char const *argv[])
 
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
 
-	SDL_Color rgb;
-	Uint32 data = getpixel(image, 200, 200);
-	SDL_GetRGB(data, image->format, &rgb.r, &rgb.g, &rgb.b);
+	/* SDL_Color rgb;
+	for (size_t i = 0; i < 400; i++)
+	{
+		for (size_t j = 0; j < 400; j++)
+		{
+			Uint32 data = getpixel(image, i, j);
+			SDL_GetRGB(data, image->format, &rgb.r, &rgb.g, &rgb.b);
+			std::cout << std::hex << "0x " << data << " ";
+		}
+		std::cout << "\n";
+	} */
+
+	/* Uint32 data = getpixel(image, i, j);
+	SDL_GetRGB(data, image->format, &rgb.r, &rgb.g, &rgb.b); */
 
 	SDL_Event event;
 	while (true)
@@ -85,12 +61,16 @@ int main(int argc, char const *argv[])
 		SDL_RenderPresent(renderer);
 	}
 
+	SDL_Surface *out = SDL_CreateRGBSurface(0, image->w, image->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	convertRGBtoYCbCr(image, out);
+	IMG_SavePNG(out, "out.png");
+
 	SDL_DestroyWindow(window);
 	SDL_DestroyTexture(texture);
 	SDL_DestroyRenderer(renderer);
 	SDL_FreeSurface(image);
+	SDL_FreeSurface(out);
 	IMG_Quit();
-	std::cout << data << "\n";
 
 	SDL_Quit();
 	return 0;

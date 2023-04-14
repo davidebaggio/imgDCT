@@ -1,2 +1,5 @@
 .vscode
-build/*.exe
+build/executable/*.exe
+build/*.o
+
+
