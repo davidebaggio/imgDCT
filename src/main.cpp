@@ -54,19 +54,34 @@ int main(int argc, char const *argv[])
 		std::cout << "Error SDL2_image Initialization";
 		return 2;
 	}
-
-	SDL_Surface *image = IMG_Load("lettuce.png");
-	if (!image)
+	SDL_Window *window = SDL_CreateWindow("image", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 400, 400, 0);
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	SDL_Surface *image = IMG_Load("./img/lettuce.png");
+	if (image == NULL)
 	{
-		std::cout << "image not opened\n";
+		std::cout << "image not opened\n"
+				  << IMG_GetError();
 		exit(1);
 	}
+
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, image);
+
 	SDL_Color rgb;
 	Uint32 data = getpixel(image, 200, 200);
 	SDL_GetRGB(data, image->format, &rgb.r, &rgb.g, &rgb.b);
 
-	SDL_FreeSurface(image);
+	while (1)
+	{
+		SDL_RenderClear(renderer);
+		SDL_RenderCopy(renderer, texture, NULL, NULL);
+		SDL_RenderPresent(renderer);
+	}
 
+	SDL_DestroyWindow(window);
+	SDL_DestroyTexture(texture);
+	SDL_DestroyRenderer(renderer);
+	SDL_FreeSurface(image);
+	IMG_Quit();
 	std::cout << data << "\n";
 
 	SDL_Quit();
