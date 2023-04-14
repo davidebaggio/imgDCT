@@ -70,8 +70,16 @@ int main(int argc, char const *argv[])
 	Uint32 data = getpixel(image, 200, 200);
 	SDL_GetRGB(data, image->format, &rgb.r, &rgb.g, &rgb.b);
 
-	while (1)
+	SDL_Event event;
+	while (true)
 	{
+		if (SDL_PollEvent(&event))
+		{
+			if (event.type == SDL_QUIT)
+			{
+				break;
+			}
+		}
 		SDL_RenderClear(renderer);
 		SDL_RenderCopy(renderer, texture, NULL, NULL);
 		SDL_RenderPresent(renderer);
