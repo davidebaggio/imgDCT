@@ -19,6 +19,6 @@ ifeq ($(detected_OS),Linux)
 endif
 
 all:
-	$(CC) $(CFLAGS) $(SRC)/main.cpp $(LFLAGS) -o $(BUILD)/main.exe
+	$(CC) $(CFLAGS) $(SRC)/main.cpp $(LFLAGS) -o $(BUILD)/main
 
 #g++ -std=c17++ main.cpp -I{Path to SDL2\include} -L{Path to SDL2\lib} -Wall -lmingw32 -lSDL2main  -o main
