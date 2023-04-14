@@ -14,7 +14,7 @@ else
     detected_OS := $(shell uname)  # same as "uname -s"
 endif
 
-ifeq ($(detected_OS),Linux)
+ifeq ($(detected_OS),Windows)
     LFLAGS += -L$(SDL2L)
 endif
 
